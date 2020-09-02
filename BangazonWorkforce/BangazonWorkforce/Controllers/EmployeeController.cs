@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using BangazonWorkforce.Models;
+﻿using BangazonWorkforce.Models;
 using BangazonWorkforce.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -45,8 +40,9 @@ namespace BangazonWorkforce.Controllers
                 e.FirstName,
                 e.LastName,
                 e.DepartmentId,
-                e.IsSuperVisor
+                d.Name
                 FROM Employee e
+                LEFT JOIN Department d on e.DepartmentId = d.Id
                 ";
                         SqlDataReader reader = cmd.ExecuteReader();
 
@@ -58,8 +54,10 @@ namespace BangazonWorkforce.Controllers
                                 Id = reader.GetInt32(reader.GetOrdinal("Id")),
                                 FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
                                 LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                                DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId")),
-                                IsSupervisor = reader.GetBoolean(reader.GetOrdinal("IsSuperVisor"))
+                                Department = new Department
+                                {
+                                    Name = reader.GetString(reader.GetOrdinal("Name"))
+                                }
                             };
 
                             employees.Add(employee);
@@ -91,39 +89,39 @@ namespace BangazonWorkforce.Controllers
                     // Select all the cohorts
                     cmd.CommandText = @"SELECT Department.Id, Department.Name FROM Department";
 
-            SqlDataReader reader = cmd.ExecuteReader();
+                    SqlDataReader reader = cmd.ExecuteReader();
 
-            // Create a new instance of our view model
-            AddEmployeeViewModel viewModel = new AddEmployeeViewModel();
-            while (reader.Read())
-            {
-                // Map the raw data to our cohort model
-                Department department = new Department
-                {
-                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                    Name = reader.GetString(reader.GetOrdinal("Name"))
-                };
+                    // Create a new instance of our view model
+                    AddEmployeeViewModel viewModel = new AddEmployeeViewModel();
+                    while (reader.Read())
+                    {
+                        // Map the raw data to our cohort model
+                        Department department = new Department
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name"))
+                        };
 
-                // Use the info to build our SelectListItem
-                SelectListItem departmentOptionTag = new SelectListItem()
-                {
-                    Text = department.Name,
-                    Value = department.Id.ToString()
-                };
+                        // Use the info to build our SelectListItem
+                        SelectListItem departmentOptionTag = new SelectListItem()
+                        {
+                            Text = department.Name,
+                            Value = department.Id.ToString()
+                        };
 
-                // Add the select list item to our list of dropdown options
-                viewModel.departments.Add(departmentOptionTag);
+                        // Add the select list item to our list of dropdown options
+                        viewModel.departments.Add(departmentOptionTag);
 
+                    }
+
+                    reader.Close();
+
+
+                    // send it all to the view
+                    return View(viewModel);
+                }
             }
-
-            reader.Close();
-
-
-            // send it all to the view
-            return View(viewModel);
         }
-    }
-}
 
         // POST: EmployeeController/Create
         [HttpPost]
@@ -159,8 +157,8 @@ namespace BangazonWorkforce.Controllers
 
 
 
-// GET: EmployeeController/Edit/5
-public ActionResult Edit(int id)
+        // GET: EmployeeController/Edit/5
+        public ActionResult Edit(int id)
         {
             return View();
         }
