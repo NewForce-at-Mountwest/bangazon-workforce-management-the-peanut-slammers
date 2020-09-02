@@ -44,13 +44,14 @@ namespace BangazonWorkforce.Controllers
         // GET: EmployeeController/Create
         public ActionResult Create()
         {
+
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
 
-                    // Select all the cohorts
+                    // Select all the departments
                     cmd.CommandText = @"SELECT Department.Id, Department.Name FROM Department";
 
             SqlDataReader reader = cmd.ExecuteReader();
@@ -59,7 +60,7 @@ namespace BangazonWorkforce.Controllers
             AddEmployeeViewModel viewModel = new AddEmployeeViewModel();
             while (reader.Read())
             {
-                // Map the raw data to our cohort model
+                // Map the raw data to our department model
                 Department department = new Department
                 {
                     Id = reader.GetInt32(reader.GetOrdinal("Id")),
@@ -99,6 +100,7 @@ namespace BangazonWorkforce.Controllers
                     conn.Open();
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
+                        //query to choose information you want to insert into employree
                         cmd.CommandText = @"INSERT INTO Employee
                 ( FirstName, LastName, DepartmentId, IsSupervisor )
                 VALUES
@@ -109,6 +111,8 @@ namespace BangazonWorkforce.Controllers
                         cmd.Parameters.Add(new SqlParameter("@issupervisor", viewModel.Employee.IsSupervisor));
                         cmd.ExecuteNonQuery();
 
+
+                        //doesnt work yet but is supposed to redirect you back to the index view
                         return RedirectToAction(nameof(Index));
                     }
                 }
