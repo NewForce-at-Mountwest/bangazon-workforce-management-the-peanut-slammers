@@ -44,14 +44,14 @@ namespace BangazonWorkforce.Controllers
                     //Sql query with join statements to include an employee's department name, assigned computer
                     //and past/previous trainings
                     cmd.CommandText = @"
-                         SELECT e.Id, e.FirstName, e.LastName, d.Name, c.Make, c.Manufacturer, t.Name
+                         SELECT e.Id, e.FirstName, e.LastName, d.Name AS 'Department', c.Make AS 'Computer', t.Name AS 'Trainings'
                             FROM Employee e JOIN Department d 
                             ON e.DepartmentId = d.Id 
                             JOIN ComputerEmployee x ON e.Id = x.EmployeeId
                             JOIN Computer c ON x.ComputerId = c.Id
                             JOIN EmployeeTraining y ON e.Id = y.EmployeeId
                             JOIN TrainingProgram t ON y.TrainingProgramId = t.Id
-                            WHERE Id = @id";
+                            WHERE e.Id = @id";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -67,16 +67,15 @@ namespace BangazonWorkforce.Controllers
                             LastName = reader.GetString(reader.GetOrdinal("LastName")),
                             Department = new Department
                             {
-                                Name = reader.GetString(reader.GetOrdinal("Name"))
+                                Name = reader.GetString(reader.GetOrdinal("Department"))
                             },
                             Computer = new Computer
                             {
-                                Make = reader.GetString(reader.GetOrdinal("Make")),
-                                Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer"))
+                                Make = reader.GetString(reader.GetOrdinal("Computer"))
                             },
                             TrainingProgram = new TrainingProgram
                             {
-                                Name = reader.GetString(reader.GetOrdinal("Name"))
+                                Name = reader.GetString(reader.GetOrdinal("Trainings"))
                             }
                         };
                         

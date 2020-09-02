@@ -1,4 +1,4 @@
-﻿ SELECT e.Id, e.FirstName, e.LastName, d.Name, c.Make, c.Manufacturer, t.Name
+﻿ SELECT e.Id, e.FirstName, e.LastName, d.Name AS 'Department', c.Make AS 'Computer', t.Name AS 'Trainings'
  FROM Employee e JOIN Department d 
  ON e.DepartmentId = d.Id 
  JOIN ComputerEmployee x ON e.Id = x.EmployeeId
