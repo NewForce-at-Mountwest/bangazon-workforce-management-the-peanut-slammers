@@ -41,16 +41,22 @@ namespace BangazonWorkforce.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-
+                    //Sql query with join statements to include an employee's department name, assigned computer
+                    //and past/previous trainings
                     cmd.CommandText = @"
-                        SELECT
-                            Id, FirstName, LastName, DepartmentId
-                        FROM Employee
-                        WHERE Id = @id";
+                         SELECT e.Id, e.FirstName, e.LastName, d.Name, c.Make, c.Manufacturer, t.Name
+                            FROM Employee e JOIN Department d 
+                            ON e.DepartmentId = d.Id 
+                            JOIN ComputerEmployee x ON e.Id = x.EmployeeId
+                            JOIN Computer c ON x.ComputerId = c.Id
+                            JOIN EmployeeTraining y ON e.Id = y.EmployeeId
+                            JOIN TrainingProgram t ON y.TrainingProgramId = t.Id
+                            WHERE Id = @id";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     Employee employee = null;
+                    
 
                     if (reader.Read())
                     {
@@ -59,8 +65,22 @@ namespace BangazonWorkforce.Controllers
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
                             LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                            DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId"))
+                            Department = new Department
+                            {
+                                Name = reader.GetString(reader.GetOrdinal("Name"))
+                            },
+                            Computer = new Computer
+                            {
+                                Make = reader.GetString(reader.GetOrdinal("Make")),
+                                Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer"))
+                            },
+                            TrainingProgram = new TrainingProgram
+                            {
+                                Name = reader.GetString(reader.GetOrdinal("Name"))
+                            }
                         };
+                        
+
                     }
                     reader.Close();
 
