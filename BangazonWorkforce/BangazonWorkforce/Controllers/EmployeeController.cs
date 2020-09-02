@@ -27,17 +27,13 @@ namespace BangazonWorkforce.Controllers
         // GET: EmployeeController
         public ActionResult Index()
         {
-            return View();
-        }
-
-        public ActionResult Employee()
-        {
-            using (SqlConnection conn = Connection)
             {
-                conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand())
+                using (SqlConnection conn = Connection)
                 {
-                    cmd.CommandText = @"
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"
                 SELECT e.Id,
                 e.FirstName,
                 e.LastName,
@@ -45,26 +41,27 @@ namespace BangazonWorkforce.Controllers
                 e.IsSuperVisor
                 FROM Employee e
                 ";
-                    SqlDataReader reader = cmd.ExecuteReader();
+                        SqlDataReader reader = cmd.ExecuteReader();
 
-                    List<Employee> employees = new List<Employee>();
-                    while (reader.Read())
-                    {
-                        Employee employee = new Employee
+                        List<Employee> employees = new List<Employee>();
+                        while (reader.Read())
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                            DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId")),
-                            IsSupervisor = reader.GetBoolean(reader.GetOrdinal("IsSuperVisor"))
-                        };
+                            Employee employee = new Employee
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId")),
+                                IsSupervisor = reader.GetBoolean(reader.GetOrdinal("IsSuperVisor"))
+                            };
 
-                        employees.Add(employee);
+                            employees.Add(employee);
+                        }
+
+                        reader.Close();
+
+                        return View(employees);
                     }
-
-                    reader.Close();
-
-                    return View(employees);
                 }
             }
         }
