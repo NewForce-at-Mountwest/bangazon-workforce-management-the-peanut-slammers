@@ -43,41 +43,55 @@ namespace BangazonWorkforce.Controllers
                 {
                     //Sql query with join statements to include an employee's department name, assigned computer
                     //and past/previous trainings
+                    //Testing for employee's current computer in query
                     cmd.CommandText = @"
-                         SELECT e.Id, e.FirstName, e.LastName, d.Name AS 'Department', c.Make AS 'Computer', t.Name AS 'Trainings'
+                          SELECT e.Id, e.FirstName, e.LastName, d.Name AS 'Department', c.Make AS 'Computer', t.Name AS 'Trainings'
                             FROM Employee e JOIN Department d 
                             ON e.DepartmentId = d.Id 
                             JOIN ComputerEmployee x ON e.Id = x.EmployeeId
                             JOIN Computer c ON x.ComputerId = c.Id
                             JOIN EmployeeTraining y ON e.Id = y.EmployeeId
                             JOIN TrainingProgram t ON y.TrainingProgramId = t.Id
-                            WHERE e.Id = @id";
+                            WHERE e.Id = 1 AND x.UnassignDate is null;";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     Employee employee = null;
                     
 
-                    if (reader.Read())
+                    while (reader.Read())
                     {
-                        employee = new Employee
+                        if (employee == null)
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                            Department = new Department
+
+                            employee = new Employee
                             {
-                                Name = reader.GetString(reader.GetOrdinal("Department"))
-                            },
-                            Computer = new Computer
-                            {
-                                Make = reader.GetString(reader.GetOrdinal("Computer"))
-                            },
-                            TrainingProgram = new TrainingProgram
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                Department = new Department
+                                {
+                                    Name = reader.GetString(reader.GetOrdinal("Department"))
+                                },
+                                Computer = new Computer
+                                {
+                                    Make = reader.GetString(reader.GetOrdinal("Computer"))
+                                },
+                            };
+                            TrainingProgram TrainingProgram = new TrainingProgram
                             {
                                 Name = reader.GetString(reader.GetOrdinal("Trainings"))
-                            }
-                        };
+                            };
+                            employee.TrainingPrograms.Add(TrainingProgram);
+                        }
+                        else
+                        {
+                            TrainingProgram TrainingProgram = new TrainingProgram
+                            {
+                                Name = reader.GetString(reader.GetOrdinal("Trainings"))
+                            };
+                            employee.TrainingPrograms.Add(TrainingProgram);
+                        }
                         
 
                     }

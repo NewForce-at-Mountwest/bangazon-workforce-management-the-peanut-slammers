@@ -27,10 +27,10 @@ namespace BangazonWorkforce.Models
         }
 
         [Display(Name = "Training Program:")]
-        public TrainingProgram TrainingProgram
+        public List<TrainingProgram> TrainingPrograms
         {
             get; set;
-        }
+        } = new List<TrainingProgram>();
 
         [Display(Name = "Computer:")]
         public Computer Computer

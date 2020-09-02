@@ -36,11 +36,15 @@
             @Html.DisplayFor(model => model.Computer.Make)
         </dd>
         <dt class="col-sm-2">
-            @Html.LabelFor(model => model.TrainingProgram.Name, "Training:")
+            @Html.LabelFor(model => model.TrainingPrograms, "Training:")
         </dt>
+        @foreach (TrainingProgram item in Model.TrainingPrograms)
+        {
+
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.TrainingProgram.Name)
+           @item.Name
         </dd>
+        }
 
     </dl>
 </div>
