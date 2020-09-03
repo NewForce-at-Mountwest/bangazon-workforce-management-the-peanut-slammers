@@ -89,23 +89,36 @@ namespace BangazonWorkforce.Controllers
                     //Testing for employee's current computer in query
                     cmd.CommandText = @"
                          SELECT e.Id, e.FirstName, e.LastName, d.Name AS 'Department', c.Make AS 'Computer', t.Name AS 'Trainings'
-                                FROM Employee e JOIN Department d 
+                                FROM Employee e LEFT JOIN Department d 
                                 ON e.DepartmentId = d.Id 
-                                JOIN ComputerEmployee x ON e.Id = x.EmployeeId
-                                JOIN Computer c ON x.ComputerId = c.Id
-                                JOIN EmployeeTraining y ON e.Id = y.EmployeeId
-                                JOIN TrainingProgram t ON y.TrainingProgramId = t.Id
+                                LEFT JOIN ComputerEmployee x ON e.Id = x.EmployeeId
+                                LEFT JOIN Computer c ON x.ComputerId = c.Id
+                                LEFT JOIN EmployeeTraining y ON e.Id = y.EmployeeId
+                                LEFT JOIN TrainingProgram t ON y.TrainingProgramId = t.Id
                             WHERE e.Id = @id AND x.UnassignDate is null;";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     Employee employee = null;
                     //TrainingProgram trainingProgram = null;
-                    Computer computer = null; 
+                    //Computer computer = null; 
 
                     while (reader.Read())
                     {
-                        if (employee == null && !reader.IsDBNull(reader.GetOrdinal("Trainings")) && computer == null)
+                        if (employee == null && reader.IsDBNull(reader.GetOrdinal("Trainings")) && reader.IsDBNull(reader.GetOrdinal("Computer")))
+                        {
+                            employee = new Employee
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                Department = new Department
+                                {
+                                    Name = reader.GetString(reader.GetOrdinal("Department"))
+                                }
+                            };
+                        }
+                        else if (employee == null && !reader.IsDBNull(reader.GetOrdinal("Trainings")) && !reader.IsDBNull(reader.GetOrdinal("Computer")))
                         {
 
                             employee = new Employee
@@ -121,20 +134,6 @@ namespace BangazonWorkforce.Controllers
                                 {
                                     Make = reader.GetString(reader.GetOrdinal("Computer"))
                                 },
-                            };
-                            TrainingProgram TrainingProgram = new TrainingProgram
-                            {
-                                Name = reader.GetString(reader.GetOrdinal("Trainings"))
-                            };
-                            employee.TrainingPrograms.Add(TrainingProgram);
-                        }
-                        else if (employee == null && !reader.IsDBNull(reader.GetOrdinal("Trainings")) && computer == null)
-                        {
-                            employee = new Employee
-                            {
-                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                                LastName = reader.GetString(reader.GetOrdinal("LastName"))
                             };
                             TrainingProgram TrainingProgram = new TrainingProgram
                             {
