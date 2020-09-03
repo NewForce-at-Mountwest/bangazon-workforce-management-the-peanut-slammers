@@ -88,14 +88,14 @@ namespace BangazonWorkforce.Controllers
                     //and past/previous trainings
                     //Testing for employee's current computer in query
                     cmd.CommandText = @"
-                          SELECT e.Id, e.FirstName, e.LastName, d.Name AS 'Department', c.Make AS 'Computer', t.Name AS 'Trainings'
-                            FROM Employee e JOIN Department d 
-                            ON e.DepartmentId = d.Id 
-                            JOIN ComputerEmployee x ON e.Id = x.EmployeeId
-                            JOIN Computer c ON x.ComputerId = c.Id
-                            JOIN EmployeeTraining y ON e.Id = y.EmployeeId
-                            JOIN TrainingProgram t ON y.TrainingProgramId = t.Id
-                            WHERE e.Id = @Id AND x.UnassignDate is null;";
+                         SELECT e.Id, e.FirstName, e.LastName, d.Name AS 'Department', c.Make AS 'Computer', t.Name AS 'Trainings'
+                                FROM Employee e JOIN Department d 
+                                ON e.DepartmentId = d.Id 
+                                JOIN ComputerEmployee x ON e.Id = x.EmployeeId
+                                JOIN Computer c ON x.ComputerId = c.Id
+                                JOIN EmployeeTraining y ON e.Id = y.EmployeeId
+                                JOIN TrainingProgram t ON y.TrainingProgramId = t.Id
+                            WHERE e.Id = @id AND x.UnassignDate is null;";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
 
