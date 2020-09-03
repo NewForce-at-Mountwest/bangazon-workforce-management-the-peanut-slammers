@@ -100,11 +100,12 @@ namespace BangazonWorkforce.Controllers
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     Employee employee = null;
-                    
+                    //TrainingProgram trainingProgram = null;
+                    Computer computer = null; 
 
                     while (reader.Read())
                     {
-                        if (employee == null)
+                        if (employee == null && !reader.IsDBNull(reader.GetOrdinal("Trainings")) && computer == null)
                         {
 
                             employee = new Employee
@@ -120,6 +121,20 @@ namespace BangazonWorkforce.Controllers
                                 {
                                     Make = reader.GetString(reader.GetOrdinal("Computer"))
                                 },
+                            };
+                            TrainingProgram TrainingProgram = new TrainingProgram
+                            {
+                                Name = reader.GetString(reader.GetOrdinal("Trainings"))
+                            };
+                            employee.TrainingPrograms.Add(TrainingProgram);
+                        }
+                        else if (employee == null && !reader.IsDBNull(reader.GetOrdinal("Trainings")) && computer == null)
+                        {
+                            employee = new Employee
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName"))
                             };
                             TrainingProgram TrainingProgram = new TrainingProgram
                             {
