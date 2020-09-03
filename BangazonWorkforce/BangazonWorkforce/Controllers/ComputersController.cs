@@ -27,7 +27,7 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
-
+        //TODO:: MAKE COMPUTER NAME A HYPERLINK THAT LEADS TO DETAILS RATHER THAN A SEPARATE BUTTON
 
         // GET: ComputersController
         public ActionResult Index()
@@ -78,11 +78,27 @@ namespace BangazonWorkforce.Controllers
         // POST: ComputersController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Computer computer)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"INSERT INTO Computer
+                ( Manufacturer, Make, PurchaseDate )
+                VALUES
+                ( @Manufacturer, @Make, @PurchaseDate )";
+                        cmd.Parameters.Add(new SqlParameter("@Manufacturer", computer.Manufacturer));
+                        cmd.Parameters.Add(new SqlParameter("@Make", computer.Make));
+                        cmd.Parameters.Add(new SqlParameter("@PurchaseDate", computer.PurchaseDate));
+                        cmd.ExecuteNonQuery();
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
             catch
             {
