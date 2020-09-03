@@ -11,6 +11,12 @@
 --INSERT INTO ComputerEmployee (EmployeeId, ComputerId, AssignDate, UnassignDate) VALUES (1, 3, '2010-09-01', '2015-09-01');
 --SELECT * FROM ComputerEmployee;
 
+--INSERT INTO ComputerEmployee (EmployeeId, ComputerId, AssignDate) Values (4, 3, '2015-10-10')
+
+--INSERT INTO EmployeeTraining (EmployeeId, TrainingProgramId) Values (4, 3);
+
+--SELECT * FROM Employee WHERE Employee.Id = 4;
+
 
 
  
