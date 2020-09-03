@@ -8,6 +8,8 @@
 
 <h4>Employee</h4>
 <hr />
+
+@*this builds the form to input the information*@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
@@ -23,11 +25,13 @@
                 <input asp-for="Employee.LastName" class="form-control" />
                 <span asp-validation-for="Employee.LastName" class="text-danger"></span>
             </div>
+            @*-------------------THIS THE DEPARTMENT DROPDOWN----------------------*@
             <div class="form-group">
                 <label asp-for="Employee.DepartmentId" class="control-label"></label>
                 <select asp-for="Employee.DepartmentId" asp-items="@Model.departments"></select>
                 <span asp-validation-for="Employee.DepartmentId" class="text-danger"></span>
             </div>
+            @*THIS IS A CHECKBOX TO CHOOSE IF THE EMPLOYEE IS A SUPERVISOR*@
             <div class="form-group">
                 <label asp-for="Employee.IsSupervisor" class="control-label"></label>
                 <input asp-for="Employee.IsSupervisor" class="form-control" />
