@@ -28,9 +28,9 @@
 
  SELECT * FROM Department;
 
- SELECT Department.Id, Department.Name, Department.Budget, COUNT(Employee.Id) AS NumberOfEmployees 
-                    FROM Department Left JOIN Employee ON Employee.DepartmentId=Department.Id 
-                    GROUP BY Department.Id, Department.Name, Department.Budget 
+ --SELECT Department.Id, Department.Name, Department.Budget, COUNT(Employee.Id) AS NumberOfEmployees 
+                   -- FROM Department Left JOIN Employee ON Employee.DepartmentId=Department.Id 
+                   -- GROUP BY Department.Id, Department.Name, Department.Budget 
 
 
 
