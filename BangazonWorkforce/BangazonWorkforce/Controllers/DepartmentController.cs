@@ -66,8 +66,64 @@ namespace BangazonWorkforce.Controllers
         // GET: DepartmentController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        
+                        SELECT Department.Id, Department.Name,
+                        Employee.FirstName, Employee.LastName FROM Department
+                        LEFT JOIN Employee ON Employee.DepartmentId=Department.Id
+                        WHERE Department.Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id",id));
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    Department department = null;
+
+
+
+                    while (reader.Read())
+                    {
+                        if (department == null)
+                        {
+                            department = new Department
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                Name = reader.GetString(reader.GetOrdinal("Name")),
+
+
+
+                            };
+                            if (!reader.IsDBNull(reader.GetOrdinal("FirstName")))
+                            {
+                                Employee employee = new Employee
+                                {
+                                    FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                    LastName = reader.GetString(reader.GetOrdinal("LastName"))
+                                };
+                                department.employees.Add(employee);
+                            }
+                        }
+                        else
+                        {
+                            Employee employee = new Employee
+                            {
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName"))
+                            };
+                            department.employees.Add(employee);
+                        }
+                        
+                    }
+                    reader.Close();
+
+                    return View(department);
+                }
+            }
         }
+            
 
         // GET: DepartmentController/Create
         public ActionResult Create()

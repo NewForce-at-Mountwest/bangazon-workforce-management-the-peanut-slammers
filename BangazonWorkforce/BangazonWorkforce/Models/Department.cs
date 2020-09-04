@@ -7,6 +7,7 @@ namespace BangazonWorkforce.Models
 {
     public class Department
     {
+        
         public int Id { get; set; }
 
         public string Name { get; set; }
@@ -16,6 +17,10 @@ namespace BangazonWorkforce.Models
         public List<Employee> employees { get; set; } = new List<Employee>();
 
        public int NumberOfEmployees { get; set; }
+
+      
+
+ 
 
 
     }
