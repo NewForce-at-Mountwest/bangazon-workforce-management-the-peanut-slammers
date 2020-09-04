@@ -37,7 +37,7 @@ namespace BangazonWorkforce.Controllers
                 {
                     cmd.CommandText = @"
                     SELECT Department.Id, Department.Name, Department.Budget, COUNT(Employee.Id) AS NumberOfEmployees 
-                    FROM Department JOIN Employee ON Employee.DepartmentId=Department.Id 
+                    FROM Department Left JOIN Employee ON Employee.DepartmentId=Department.Id 
                     GROUP BY Department.Id, Department.Name, Department.Budget
         ";
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -75,12 +75,13 @@ namespace BangazonWorkforce.Controllers
                         
                         SELECT Department.Id, Department.Name,
                         Employee.FirstName, Employee.LastName FROM Department
-                        JOIN Employee ON Employee.DepartmentId=Department.Id
+                        LEFT JOIN Employee ON Employee.DepartmentId=Department.Id
                         WHERE Department.Id = @id";
                     cmd.Parameters.Add(new SqlParameter("@id",id));
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     Department department = null;
+                    
 
 
 
@@ -96,14 +97,16 @@ namespace BangazonWorkforce.Controllers
 
 
                             };
-                            Employee employee = new Employee
+                            if (!reader.IsDBNull(reader.GetOrdinal("FirstName")))
                             {
-                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                                LastName = reader.GetString(reader.GetOrdinal("LastName"))
-                            };
-                            department.employees.Add(employee);
-
-                        }
+                                Employee employee = new Employee
+                                {
+                                    FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                    LastName = reader.GetString(reader.GetOrdinal("LastName"))
+                                };
+                                department.employees.Add(employee);
+                            }
+                        } 
                         else
                         {
                             Employee employee = new Employee
