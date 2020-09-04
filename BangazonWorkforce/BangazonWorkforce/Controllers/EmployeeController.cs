@@ -100,8 +100,7 @@ namespace BangazonWorkforce.Controllers
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     Employee employee = null;
-                    //TrainingProgram trainingProgram = null;
-                    //Computer computer = null; 
+                  
 
                     while (reader.Read())
                     {
