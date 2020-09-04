@@ -75,7 +75,7 @@ namespace BangazonWorkforce.Controllers
                         
                         SELECT Department.Id, Department.Name,
                         Employee.FirstName, Employee.LastName FROM Department
-                        JOIN Employee ON Employee.DepartmentId=Department.Id
+                        LEFT JOIN Employee ON Employee.DepartmentId=Department.Id
                         WHERE Department.Id = @id";
                     cmd.Parameters.Add(new SqlParameter("@id",id));
                     SqlDataReader reader = cmd.ExecuteReader();
