@@ -37,7 +37,7 @@ namespace BangazonWorkforce.Controllers
                 {
                     cmd.CommandText = @"
                     SELECT Department.Id, Department.Name, Department.Budget, COUNT(Employee.Id) AS NumberOfEmployees 
-                    FROM Department JOIN Employee ON Employee.DepartmentId=Department.Id 
+                    FROM Department LEFT JOIN Employee ON Employee.DepartmentId=Department.Id 
                     GROUP BY Department.Id, Department.Name, Department.Budget
         ";
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -132,11 +132,26 @@ namespace BangazonWorkforce.Controllers
         // POST: DepartmentController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Department department)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"INSERT INTO Department
+                ( Name, Budget  )
+                VALUES
+                ( @Name, @Budget )";
+                        cmd.Parameters.Add(new SqlParameter("@Name", department.Name));
+                        cmd.Parameters.Add(new SqlParameter("@Budget", department.Budget));
+                        cmd.ExecuteNonQuery();
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
             catch
             {
