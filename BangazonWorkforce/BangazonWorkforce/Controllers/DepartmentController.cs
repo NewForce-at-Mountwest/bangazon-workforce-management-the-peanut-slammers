@@ -96,13 +96,15 @@ namespace BangazonWorkforce.Controllers
 
 
                             };
-                            Employee employee = new Employee
+                            if (!reader.IsDBNull(reader.GetOrdinal("FirstName")))
                             {
-                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                                LastName = reader.GetString(reader.GetOrdinal("LastName"))
-                            };
-                            department.employees.Add(employee);
-
+                                Employee employee = new Employee
+                                {
+                                    FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                    LastName = reader.GetString(reader.GetOrdinal("LastName"))
+                                };
+                                department.employees.Add(employee);
+                            }
                         }
                         else
                         {
