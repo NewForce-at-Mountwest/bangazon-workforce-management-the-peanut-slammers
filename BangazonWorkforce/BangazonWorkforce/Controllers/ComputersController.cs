@@ -160,7 +160,7 @@ namespace BangazonWorkforce.Controllers
         }
 
         // GET: ComputersController/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int id, IFormCollection collection)
         {
             using (SqlConnection conn = Connection)
             {
@@ -198,7 +198,7 @@ namespace BangazonWorkforce.Controllers
         // POST: ComputersController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id)
         {
             try
             {
@@ -221,8 +221,13 @@ namespace BangazonWorkforce.Controllers
             }
             catch
             {
-                return View();
+                return RedirectToAction(nameof(DeleteError));
             }
+        }
+
+        public new ActionResult DeleteError()
+        {
+            return View();
         }
     }
 }
