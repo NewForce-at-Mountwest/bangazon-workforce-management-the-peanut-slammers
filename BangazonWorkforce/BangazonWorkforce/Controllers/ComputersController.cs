@@ -28,6 +28,7 @@ namespace BangazonWorkforce.Controllers
         }
 
         //TODO:: MAKE COMPUTER NAME A HYPERLINK THAT LEADS TO DETAILS RATHER THAN A SEPARATE BUTTON
+        //TODO:: DIRECT USER TO A MESSAGE STATING THEIR 
 
         // GET: ComputersController
         public ActionResult Index()
@@ -66,8 +67,39 @@ namespace BangazonWorkforce.Controllers
         // GET: ComputersController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            using (SqlConnection conn = Connection)
+            {
+            
+
+            conn.Open();
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = @"
+                        SELECT
+                            Id, Make, Manufacturer, PurchaseDate
+                        FROM Computer
+                        WHERE Id = @id";
+                cmd.Parameters.Add(new SqlParameter("@id", id));
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                Computer computer = null;
+
+                if (reader.Read())
+                {
+                    computer = new Computer
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        Make = reader.GetString(reader.GetOrdinal("Make")),
+                        Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer")),
+                        PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")).ToString(),
+                    };
+                }
+                reader.Close();
+
+                return View(computer);
+            }
         }
+    }
 
         // GET: ComputersController/Create
         public ActionResult Create()
@@ -130,7 +162,37 @@ namespace BangazonWorkforce.Controllers
         // GET: ComputersController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT
+                            Id, Make, Manufacturer, PurchaseDate
+                        FROM Computer
+                        WHERE Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    Computer computer = null;
+
+                    if (reader.Read())
+                    {
+                        computer = new Computer
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Make = reader.GetString(reader.GetOrdinal("Make")),
+                            Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer")),
+                            PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")).ToString()
+
+                        };
+                    }
+                    reader.Close();
+
+                    return View(computer);
+                }
+            }
         }
 
         // POST: ComputersController/Delete/5
@@ -140,7 +202,22 @@ namespace BangazonWorkforce.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"DELETE FROM Computer WHERE Id = @id";
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            return RedirectToAction(nameof(Index));
+                        }
+                        throw new Exception("No rows affected");
+                    }
+                }
             }
             catch
             {

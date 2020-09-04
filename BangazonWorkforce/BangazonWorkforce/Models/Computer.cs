@@ -10,9 +10,9 @@ namespace BangazonWorkforce.Models
     {
         public int Id { get; set; }
 
-        public DateTime PurchaseDate { get; set; }
+        public string PurchaseDate { get; set; }
 
-        public DateTime DecommissionDate { get; set; }
+        public string DecommissionDate { get; set; }
 
         [Display(Name = "Computer:")]
         public string Make { get; set; }
